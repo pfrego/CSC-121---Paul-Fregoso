@@ -9,12 +9,13 @@ int main(){
     std::cout<<"Enter your second point: \n";
     std::cin>>x2;
     std::cin>>y2;
-    
+    std::cout<<"Calculating the midpoint now...";
     double w = x1+x2;
     double z = y1+y2;
     double j = w/2;
     double p = z/2;
     
     std::cout<<"The midpoint of "<< "(" << x1 << ","<< y1 << ")" <<" and "<< "(" << x2 << ","<< y2 << ")" <<" is "<< "(" << j<< ","<< p << ")"<< "\n";
+    std::cout<<"Thank you for using this program!"
     return 0;
 }
