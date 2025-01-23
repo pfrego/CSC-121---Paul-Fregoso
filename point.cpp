@@ -16,6 +16,6 @@ int main(){
     double p = z/2;
     
     std::cout<<"The midpoint of "<< "(" << x1 << ","<< y1 << ")" <<" and "<< "(" << x2 << ","<< y2 << ")" <<" is "<< "(" << j<< ","<< p << ")"<< "\n";
-    std::cout<<"Thank you for using this program!"
+    std::cout<<"Thank you for using this program!";
     return 0;
 }
