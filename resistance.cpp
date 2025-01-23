@@ -21,4 +21,5 @@ int main(){
     std::cout<<"The total resistance of 1/r1 + 1/r2 is "
     << total
     << "\n";
+    std::cout<<"Thank you for using this program! \n";
 }
