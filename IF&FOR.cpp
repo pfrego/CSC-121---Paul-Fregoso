@@ -2,7 +2,7 @@
 using namespace std;
 int main(){
     int num = 0;
-    cout<<"Problem 1... \n" << "Choose a number: \n";
+    cout<<"Problem 1 \n" << "Choose a number: \n";
     cin>>num;
     if(num % 3 == 0){
         cout<<"Fizz \n";
@@ -16,11 +16,18 @@ int main(){
         cout<<num << "\n";
     }
     
-    cout<<"Problem 2...\n";
+    cout<<"Problem 2\n";
     
     int i = 0;
     for(int i = 0; i < 101; i++){
         cout<< i << endl;
     }
     
+    cout<<"Problem 3 \n";
+    int m = 0;
+    int sum = 0;
+    for (int m = 1; m < 101; m++){
+        sum = sum + m;
+    }
+    cout << sum << endl;
 }
