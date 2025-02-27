@@ -8,7 +8,7 @@ double z = 0.0;
 double r = 0.0;
 double theta = 0.0;
 double phi = 0.0;
-double radius(double &x, double &y, double &z){
+double radius(double x, double y, double z){
     return r = sqrt(x*x+y*y+z*z);
 }
 double t(double x, double y, double z){
