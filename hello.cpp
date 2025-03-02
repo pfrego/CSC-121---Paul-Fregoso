@@ -1,5 +1,8 @@
 #include <iostream>
 
 int main (){
-    std::cout<<"Hello World!"<<std::endl;
+    double num;
+    std::cout<<"Hello World!\n"<<"Please enter a number!\n"<<std::endl;
+    std::cin >> num;
+    std::cout <<"Your number is " << num << "!\nIt was nice meeting you, goodbye!\n";
 }
