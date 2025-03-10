@@ -1,23 +1,24 @@
-#include <iostream>
-int main () {
-    std::string name;
-    
-    std::cout<<"Enter your name?\n";
-    std::cin>>name;
-    std::cout<<"Happy Birthday to you \n";
-    std::cout<<"Happy Birthday to you \n";
-    std::cout<<"Happy Birthday Dear ";
-    std::cout<<name;
-    std::cout<<"\n";
-    std::cout<<"Happy Birthday to you \n";
-    
-    std::cout<<"    iiiiiiiiii \n";
-   std::cout<<"   |:H:a:p:p:y:| \n";
- std::cout<<" __|___________|__ \n";
-std::cout<<"|^^^^^^^^^^^^^^^^^| \n";
-std::cout<<"|:B:i:r:t:h:d:a:y:| \n";
-std::cout<<"|                 | \n";
-std::cout<<"~~~~~~~~~~~~~~~~~~~ \n";
-
-    return 0;
+# include <iostream>
+# include <iomanip>
+# include "time.h"
+using namespace std;
+int main (){
+    int hours1 = 0;
+    int hours2 = 0;
+    int min1 = 0;
+    int min2 = 0;
+    int diffHours, diffMin;
+    double main_hours;
+    cout << "Welcome to the Time Calculation Program! \n" << "Enter your first time: ";
+    cin >> hours1 >> min1;
+    cout << "Enter your second time: ";
+    cin >> hours2 >> min2;
+    cout << "The time interval can be written as: \n" << min_calc(hours1, hours2, min1, min2) << " minutes\n";
+    hour_calc( hours1, hours2, min1, min2 ,diffHours, diffMin);
+    cout << diffHours << " hours and " << diffMin << " minutes\n";
+    hours_calc(hours1, hours2, min1, min2, main_hours);
+    cout << fixed << setprecision(2);
+    cout << main_hours << " hours\n";
+    cout << "Thank you for using the Time Interval Calculation Program.\n";
+     
 }
