@@ -9,22 +9,34 @@ class Student {
     Student(string first_name, string last_name) {
         FName = first_name;
         LName = last_name;
- 
     }
-    void setFName(string first_name){
-        FName = first_name;
+    int IDnum(){
+        srand(time(0));
+        return (1 + (rand()%100000));
     }
     string getFName(){
         return FName;
+    }
+    string getLName(){
+        return LName;
+    }
+    int getIDnum(){
+        return IDnum();
+    }
+    string speak(){
+        return "Hello my name is " + FName;
     }
 
     
 };
  
 int main() {
-  Student Student("Paul", "Fregoso");
+Student student("Paul", "Fregoso");
  
-  assert(Student.getFName()== "Paul");
+    assert(student.getFName() == "Paul");
+    assert(student.getIDnum() == 100000);
+    cout << student.speak()<<endl;
+    cout << "ID#" << student.getIDnum() << endl;
  
   return 0;
 }
