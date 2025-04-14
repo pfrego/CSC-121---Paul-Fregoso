@@ -1,64 +1,101 @@
 #include "BattleBoatsGrid.h"
-#include <iostream>
-#include <cassert>
-#include <vector>
+#include <sstream>
+#include <cctype>
 
-using namespace std;
-
-void runAddBoatTests(BattleBoatsGrid& grid) {
-    vector<string> boatCoords = {"A1", "B2", "C3", "D4", "E5"};
-
-    for (const auto& coord : boatCoords) {
-        bool success = grid.addBoat(coord);
-        assert(success && "Boat should be added successfully");
-    }
-
-    assert(!grid.addBoat("A1") && "Duplicate boat should not be added");
-    assert(!grid.addBoat("Z9") && "Invalid row should be rejected");
-    assert(!grid.addBoat("A0") && "Invalid column should be rejected");
-
-    cout << "✅ Boat placement tests passed!\n";
+BattleBoatsGrid::BattleBoatsGrid() {
+    reset();
 }
 
-void runFireShotTests(BattleBoatsGrid& grid) {
-    vector<string> hitShots = {"A1", "C3"};
-    vector<string> missShots = {"J10", "H8"};
-
-    for (const auto& shot : hitShots) {
-        string result = grid.fireShot(shot);
-        assert(result.find("Hit") != string::npos && "Should hit a boat");
-    }
-
-    for (const auto& shot : missShots) {
-        string result = grid.fireShot(shot);
-        assert(result.find("Miss") != string::npos && "Should miss");
-    }
-    string repeat = grid.fireShot("A1");
-    assert(repeat.find("Already") != string::npos && "Should not fire twice on same cell");
-
-    cout << "✅ Firing tests passed!\n";
+void BattleBoatsGrid::reset() {
+    for (auto& row : grid)
+        for (auto& cell : row)
+            cell = "_";
+    boatsRemaining = 0;
 }
 
-void runDisplayTests(BattleBoatsGrid& grid) {
-    cout << "\n🔍 Full Board (showAll = true):\n";
-    cout << grid.display(true);
-
-    cout << "\n🔒 Hidden Opponent View (showAll = false):\n";
-    cout << grid.display(false);
+int BattleBoatsGrid::getRowIndex(char rowChar) {
+    rowChar = std::toupper(rowChar);
+    return (rowChar >= 'A' && rowChar <= 'J') ? rowChar - 'A' : -1;
 }
 
-int main() {
-    BattleBoatsGrid testGrid;
-    testGrid.reset();
+int BattleBoatsGrid::getColumnIndex(const std::string& colStr) {
+    try {
+        int col = std::stoi(colStr);
+        return (col >= 1 && col <= 10) ? col - 1 : -1;
+    } catch (...) {
+        return -1;
+    }
+}
 
-    cout << "\n===== Running BattleBoatsGrid Tests =====\n";
+std::string BattleBoatsGrid::generateHeader() {
+    std::stringstream ss;
+    ss << "\t";
+    for (int i = 1; i <= 10; ++i)
+        ss << i << (i < 10 ? " " : "");
+    ss << "\n";
+    return ss.str();
+}
 
-    runAddBoatTests(testGrid);
-    runFireShotTests(testGrid);
-    runDisplayTests(testGrid);
+std::string BattleBoatsGrid::generateRow(char letter, int index, bool showAll) {
+    std::stringstream ss;
+    ss << letter << "\t";
+    for (int i = 0; i < 10; ++i) {
+        std::string cell = grid[index][i];
 
-    cout << "\n🎉 All tests completed successfully!\n";
+        if (!showAll && cell == "🛥️") {
+            ss << "_ ";
+        } else {
+            ss << cell << " ";
+        }
+    }
+    ss << "\n";
+    return ss.str();
+}
 
-    return 0;
+bool BattleBoatsGrid::addBoat(const std::string& coordinate) {
+    if (coordinate.length() < 2 || coordinate.length() > 3) return false;
+    int row = getRowIndex(coordinate[0]);
+    std::string colStr = coordinate.substr(1);
+    int col = getColumnIndex(colStr);
+    if (row == -1 || col == -1 || grid[row][col] == "🛥️") return false;
+
+    grid[row][col] = "🛥️";
+    boatsRemaining++;
+    return true;
+}
+
+std::string BattleBoatsGrid::fireShot(const std::string& coordinate) {
+    if (coordinate.length() < 2 || coordinate.length() > 3) return "Invalid coordinate!";
+    int row = getRowIndex(coordinate[0]);
+    std::string colStr = coordinate.substr(1);
+    int col = getColumnIndex(colStr);
+    if (row == -1 || col == -1) return "Invalid coordinate!";
+
+    if (grid[row][col] == "🛥️") {
+        grid[row][col] = "X";
+        boatsRemaining--;
+        return "💥 Hit!";
+    } else if (grid[row][col] == "_") {
+        grid[row][col] = "O";
+        return "Miss!";
+    } else {
+        return "Already targeted!";
+    }
+}
+
+bool BattleBoatsGrid::isGameOver() {
+    return boatsRemaining == 0;
+}
+
+std::string BattleBoatsGrid::display(bool showAll) {
+    std::stringstream ss;
+    ss << generateHeader();
+    for (int i = 0; i < 10; ++i)
+        ss << generateRow('A' + i, i, showAll);
+    return ss.str();
+}
+
+bool BattleBoatsGrid::isValidTarget(int row, int col) {
+    return grid[row][col] == "_" || grid[row][col] == "🛥️";
 }
 
