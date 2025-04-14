@@ -1,162 +1,103 @@
+#include "BattleBoatsGrid.h"
 #include <iostream>
-#include <cassert>
-#include <sstream>
-#include <array>
 #include <cstdlib>
 #include <ctime>
+#include <vector>
+#include <string>
 
 using namespace std;
 
 
-const int BOARD_SIZE = 4;
-
-
-void initializeBoard(array<array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
-    for (int i = 0; i < BOARD_SIZE; ++i) {
-        for (int j = 0; j < BOARD_SIZE; ++j) {
-            board[i][j] = '~';
-        }
-    }
-}
-
-void displayBoard(const array<array<char, BOARD_SIZE>, BOARD_SIZE>& board) {
-    cout << "  1 2 3 4\n";
-    char rowLabel = 'A';
-    for (int i = 0; i < BOARD_SIZE; ++i) {
-        cout << rowLabel++ << " ";
-        for (int j = 0; j < BOARD_SIZE; ++j) {
-            cout << board[i][j] << " ";
-        }
-        cout << endl;
-    }
-}
-
-
-void placeShip(array<array<char, BOARD_SIZE>, BOARD_SIZE>& board, int& shipRow, int& shipCol) {
-    shipRow = rand() % BOARD_SIZE;
-    shipCol = rand() % BOARD_SIZE;
-    board[shipRow][shipCol] = 'S';
-}
-
-
-void playerGuess(int& row, int& col) {
+string getCoordinateInput(const string& prompt) {
     string input;
-    while (true) {
-        cout << "Enter your guess (row [A-D] column [1-4]): ";
-        getline(cin, input);
-        
-        
-        stringstream ss(input);
-        char rowChar;
-        int colNum;
-
-        ss >> rowChar >> colNum;
-        
-        
-        rowChar = toupper(rowChar);
-        row = rowChar - 'A';
-        
-        
-        col = colNum - 1;
-
-        if (ss.fail() || row < 0 || row >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE) {
-            cout << "Invalid input. Please enter row [A-D] and column [1-4]." << endl;
-        } else {
-            break;
-        }
-    }
+    cout << prompt;
+    cin >> input;
+    return input;
 }
 
-
-bool checkHit(array<array<char, BOARD_SIZE>, BOARD_SIZE>& board, int row, int col) {
-    if (board[row][col] == 'S') {
-        board[row][col] = 'X';
-        return true;
-    } else if (board[row][col] == '~') {
-        board[row][col] = 'O';
-        return false;
-    }
-    return false;
+string getRandomCoordinate() {
+    char row = 'A' + rand() % 10;
+    int col = 1 + rand() % 10;
+    return string(1, row) + to_string(col);
 }
 
-
-void computerGuess(int& row, int& col) {
-    row = rand() % BOARD_SIZE;
-    col = rand() % BOARD_SIZE;
-    cout << "Computer guesses: " << char(row + 'A') << " " << col + 1 << endl;
-}
-
-
-bool checkComputerHit(array<array<char, BOARD_SIZE>, BOARD_SIZE>& board, int row, int col) {
-    if (board[row][col] == 'S') {
-        board[row][col] = 'X';
-        return true;
-    } else if (board[row][col] == '~') {
-        board[row][col] = 'O';
-        return false;
-    }
-    return false;
-}
-
-
-void battleshipGame() {
-    
-    srand(time(0));
-
-   
-    array<array<char, BOARD_SIZE>, BOARD_SIZE> playerBoard;
-    array<array<char, BOARD_SIZE>, BOARD_SIZE> computerBoard;
-
-    initializeBoard(playerBoard);
-    initializeBoard(computerBoard);
-
-    
-    int playerShipRow, playerShipCol;
-    placeShip(playerBoard, playerShipRow, playerShipCol);
-
-    int computerShipRow, computerShipCol;
-    placeShip(computerBoard, computerShipRow, computerShipCol);
-
-    cout << "Welcome to Battleship!" << endl;
-
-   
-    int turn = 1;
-    while (true) {
-        cout << "\nTurn " << turn++ << endl;
-
-        
-        cout << "Your board:" << endl;
-        displayBoard(playerBoard);
-
-        
-        int playerRow, playerCol;
-        playerGuess(playerRow, playerCol);
-        if (checkHit(computerBoard, playerRow, playerCol)) {
-            cout << "You hit the computer's ship!" << endl;
-            break;
-        }
-
-        
-        int compRow, compCol;
-        computerGuess(compRow, compCol);
-        if (checkComputerHit(playerBoard, compRow, compCol)) {
-            cout << "The computer hit your ship!" << endl;
-            break;
-        }
-
-        cout << "\n" << "------------------------" << endl;
-    }
-
-   
-    cout << "\nGame Over!" << endl;
-    cout << "Your final board:" << endl;
-    displayBoard(playerBoard);
-    cout << "Computer's final board:" << endl;
-    displayBoard(computerBoard);
+pair<int, int> parseCoordinate(const string& coordinate) {
+    char rowChar = coordinate[0];
+    string colStr = coordinate.substr(1);
+    int row = toupper(rowChar) - 'A';
+    int col = stoi(colStr) - 1;
+    return { row, col };
 }
 
 int main() {
-    battleshipGame();
+    srand(time(0));
+
+    BattleBoatsGrid player, cpu;
+    string input;
+    int numBoats = 5;
+
+    do {
+        player.reset();
+        cpu.reset();
+        vector<string> cpuBoatLocations;
+
+        cout << "\n=== BATTLEBOATS: PLAYER VS CPU ===\n";
+        cout << "Place your " << numBoats << " boats (e.g. A1, J10):\n";
+
+        
+        for (int i = 0; i < numBoats;) {
+            input = getCoordinateInput("Boat " + to_string(i + 1) + ": ");
+            if (player.addBoat(input)) i++;
+            else cout << "Invalid or duplicate coordinate. Try again.\n";
+        }
+
+        
+        while (cpuBoatLocations.size() < numBoats) {
+            string coord = getRandomCoordinate();
+            if (cpu.addBoat(coord)) cpuBoatLocations.push_back(coord);
+        }
+
+       
+        while (true) {
+            cout << "\n--- Your Turn ---\n";
+            cout << "Your Board:\n" << player.display(true);
+            cout << "CPU Board (discovered):\n" << cpu.display(false);
+
+            input = getCoordinateInput("Fire at: ");
+            cout << "You: " << cpu.fireShot(input) << "\n";
+
+            if (cpu.isGameOver()) {
+                cout << "\n🏆 You win! All enemy ships sunk!\n";
+                break;
+            }
+
+            
+            cout << "\n--- CPU's Turn ---\n";
+            string cpuShot;
+            int row, col;
+
+           
+            while (true) {
+                cpuShot = getRandomCoordinate();
+                tie(row, col) = parseCoordinate(cpuShot);
+                if (player.isValidTarget(row, col)) break;
+            }
+
+            cout << "CPU fires at " << cpuShot << "...\n";
+            cout << "CPU: " << player.fireShot(cpuShot) << "\n";
+
+            if (player.isGameOver()) {
+                cout << "\n💀 CPU wins! All your ships are sunk!\n";
+                break;
+            }
+        }
+
+        cout << "Play again? (y/n): ";
+        cin >> input;
+
+    } while (tolower(input[0]) == 'y');
+
+    cout << "\nThanks for playing BattleBoats!\n";
     return 0;
 }
 
