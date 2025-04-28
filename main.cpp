@@ -1,24 +1,48 @@
-# include <iostream>
-# include <iomanip>
-# include "time.h"
+
+
+#include <iostream>
 using namespace std;
-int main (){
-    int hours1 = 0;
-    int hours2 = 0;
-    int min1 = 0;
-    int min2 = 0;
-    int diffHours, diffMin;
-    double main_hours;
-    cout << "Welcome to the Time Calculation Program! \n" << "Enter your first time: ";
-    cin >> hours1 >> min1;
-    cout << "Enter your second time: ";
-    cin >> hours2 >> min2;
-    cout << "The time interval can be written as: \n" << min_calc(hours1, hours2, min1, min2) << " minutes\n";
-    hour_calc( hours1, hours2, min1, min2 ,diffHours, diffMin);
-    cout << diffHours << " hours and " << diffMin << " minutes\n";
-    hours_calc(hours1, hours2, min1, min2, main_hours);
-    cout << fixed << setprecision(2);
-    cout << main_hours << " hours\n";
-    cout << "Thank you for using the Time Interval Calculation Program.\n";
-     
+
+int main(){
+// Exercise 1
+    int  a; int b;
+    cout << "Enter value of A: ";
+    cin >> a;
+    cout << "Enter value of B: ";
+    cin >> b;
+
+    int *ptrA=&a;
+    int *ptrB=&b;
+
+    cout << "Value of ptrA is " << *ptrA << " sored in address "<< ptrA<<"\n";
+    
+    cout << "Value of ptrB is " << *ptrB <<" sored in address "<< ptrB<<"\n";
+// Exercise 2
+    int n;int i; int max=0;
+      cout<<"Enter number of values:";
+      cin>>n;
+
+      cout<<"Enter values in array:\n";
+      int arr[n];
+      for(i=0;i<n;i++) {
+
+       cin>>arr[i];
+      }
+
+
+      for(int u=0;u<=n;u++){
+       if (arr[u]>max)
+         max=arr[u];
+      }
+
+      int *pointer= &max;
+
+
+      cout<<"Largest integer value in the array is "<<*pointer;
+// Exercise 3
+    
+// Exercise 4
+    
+// Exercise 5
+    return 0;
 }
