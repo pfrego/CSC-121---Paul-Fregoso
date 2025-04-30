@@ -1,21 +1,49 @@
 #include <iostream>
-#include <cmath>
-int main(){
-    double x1 = 0.0 ,y1 = 0.0 ;
-    double x2 = 0.0 , y2 = 0.0 ;
-    std::cout<<"Enter your first point: \n";
-    std::cin>>x1;
-    std::cin>>y1;
-    std::cout<<"Enter your second point: \n";
-    std::cin>>x2;
-    std::cin>>y2;
-    std::cout<<"Calculating the midpoint now...";
-    double w = x1+x2;
-    double z = y1+y2;
-    double j = w/2;
-    double p = z/2;
-    
-    std::cout<<"The midpoint of "<< "(" << x1 << ","<< y1 << ")" <<" and "<< "(" << x2 << ","<< y2 << ")" <<" is "<< "(" << j<< ","<< p << ")"<< "\n";
-    std::cout<<"Thank you for using this program!";
+using namespace std;
+
+char* returnCharPointer(char* ptr) {
+    return ptr;
+}
+
+float* intToFloatPointer(int* ptr) {
+    return reinterpret_cast<float*>(ptr); }
+
+void checkOddEven(int* ptr) {
+    if (*ptr % 2 == 0)
+        cout << "even" << endl;
+    else
+        cout << "odd" << endl;
+}
+
+class MyClass {
+public:
+    void pp() {
+        cout << "MyClass::pp() was called!" << endl;
+    }
+};
+
+void callPP(MyClass* objPtr) {
+    if (objPtr != nullptr) {
+        objPtr->pp();
+    }
+}
+
+int main() {
+    cout << "Pointer Exercises";
+    char c = 'x';
+    char* cptr = &c;
+    cout << "Char pointer points to: " << *returnCharPointer(cptr) << endl;
+
+    int num = 7;
+    int* iptr = &num;
+    checkOddEven(iptr);
+
+    float* fptr = intToFloatPointer(iptr);
+    cout << "Reinterpreted int as float: " << *fptr << endl;
+
+    MyClass obj;
+    callPP(&obj);
+    cout << "Pointer Exercise Successful!";
     return 0;
 }
+
