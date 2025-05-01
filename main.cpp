@@ -1,48 +1,32 @@
-
-
 #include <iostream>
-using namespace std;
+#include <string>
+#include "stats.h"
 
-int main(){
-// Exercise 1
-    int  a; int b;
-    cout << "Enter value of A: ";
-    cin >> a;
-    cout << "Enter value of B: ";
-    cin >> b;
+int main() {
+    std::cout << "Welcome to the Number Statistics Program!" << std::endl << std::endl;
 
-    int *ptrA=&a;
-    int *ptrB=&b;
+    std::string filename;
+    std::cout << "Please enter the name of your data file: ";
+    std::getline(std::cin, filename);
+    Stats stats;
 
-    cout << "Value of ptrA is " << *ptrA << " sored in address "<< ptrA<<"\n";
-    
-    cout << "Value of ptrB is " << *ptrB <<" sored in address "<< ptrB<<"\n";
-// Exercise 2
-    int n;int i; int max=0;
-      cout<<"Enter number of values:";
-      cin>>n;
+    if (!processFile(filename, stats)) {
+        std::cerr << "Warning: Could not open file '" << filename << "' or it contains no valid data." << std::endl;
+        return 1;
+    }
 
-      cout<<"Enter values in array:\n";
-      int arr[n];
-      for(i=0;i<n;i++) {
+    std::cout << "\nFile '" << filename << "' opened successfully!" << std::endl;
+    std::cout << "Reading data..." << std::endl;
+    std::cout << "Calculating..." << std::endl;
 
-       cin>>arr[i];
-      }
+    std::cout << "\nFor your data, the statistics are as follows:\n" << std::endl;
+    std::cout << "     Count:  " << stats.count << std::endl;
+    std::cout << "   Minimum:  " << stats.min << std::endl;
+    std::cout << "      Mean:  " << stats.mean << std::endl;
+    std::cout << "   Maximum:  " << stats.max << std::endl;
+    std::cout << "    StdDev:  " << stats.stddev << std::endl;
 
+    std::cout << "\nThank you for using the Number Statistics Program!" << std::endl;
 
-      for(int u=0;u<=n;u++){
-       if (arr[u]>max)
-         max=arr[u];
-      }
-
-      int *pointer= &max;
-
-
-      cout<<"Largest integer value in the array is "<<*pointer;
-// Exercise 3
-    
-// Exercise 4
-    
-// Exercise 5
     return 0;
 }
