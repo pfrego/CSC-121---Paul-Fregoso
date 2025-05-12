@@ -1,37 +1,54 @@
 #include "GameOfLife.h"
 #include <iostream>
-#include <sstream>
+#include <limits>
+#include <string>
 
-std::set<int> parseRule(const std::string& input) {
-    std::set<int> rule;
-    std::stringstream ss(input);
-    int num;
-    while (ss >> num) {
-        rule.insert(num);
+using namespace std;
+
+int getPositiveInt(const string& prompt) {
+    int value;
+    while (true) {
+        cout << prompt;
+        cin >> value;
+        if (!cin.fail() && value > 0) return value;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Please enter a positive integer.\n";
     }
-    return rule;
 }
 
 int main() {
-    int rows = 10, cols = 10;
-    std::string birthInput, survivalInput;
+    
+    cout << "Welcome to Conway's Game of Life!\n" << "This is a simulation where cells evolve according to specific rules.\n" << "You will be able to define the grid size and the birth/survival rules.\n" << "Let's begin! Please provide the required inputs.\n\n";
 
-    std::cout << "Enter neighbor counts for birth (e.g., '3'): ";
-    std::getline(std::cin, birthInput);
-    std::cout << "Enter neighbor counts for survival (e.g., '2 3'): ";
-    std::getline(std::cin, survivalInput);
+    
+    int rows = getPositiveInt("Enter number of rows: ");
+    int cols = getPositiveInt("Enter number of columns: ");
+    int birthLimit = getPositiveInt("Enter birth limit (e.g., 3): ");
+    int survivalLower = getPositiveInt("Enter survival lower limit (e.g., 2): ");
+    int survivalUpper = getPositiveInt("Enter survival upper limit (e.g., 3): ");
 
-    GameOfLife game(rows, cols, parseRule(birthInput), parseRule(survivalInput));
+    
+    GameOfLife game(rows, cols, birthLimit, survivalLower, survivalUpper);
+    game.initializeRandom();
 
-    game.setCell(1, 2, true);
-    game.setCell(2, 3, true);
-    game.setCell(3, 1, true);
-    game.setCell(3, 2, true);
-    game.setCell(3, 3, true);
-
-    for (int i = 0; i < 10; ++i) {
+    
+    while (true) {
         game.display();
-        game.nextGeneration();
+        game.update();
+
+        string input;
+        while (true) {
+            cout << "Do you want to continue to the next generation? (y/n): ";
+            getline(cin >> ws, input);
+            if (input == "y" || input == "Y") break;
+            else if (input == "n" || input == "N") {
+                
+                cout << "Thank you for playing Conway's Game of Life!\n" << "Please feel free to run the simulation again!\n";
+                return 0;
+            }
+            else cout << "Please enter 'y' for yes or 'n' for no.\n";
+        }
     }
 
     return 0;

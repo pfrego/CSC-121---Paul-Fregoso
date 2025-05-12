@@ -1,59 +1,57 @@
 #include "GameOfLife.h"
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 
-GameOfLife::GameOfLife(int rows, int cols, std::set<int> birthRules, std::set<int> survivalRules)
-    : rows(rows), cols(cols), birthRules(birthRules), survivalRules(survivalRules) {
-    grid.resize(rows, std::vector<bool>(cols, false));
+using namespace std;
+
+GameOfLife::GameOfLife(int rows, int cols, int birthLimit, int survivalLower, int survivalUpper)
+    : rows(rows), cols(cols), birthLimit(birthLimit),
+      survivalLower(survivalLower), survivalUpper(survivalUpper) {
+    grid.resize(rows, vector<int>(cols, 0));
+    nextGrid.resize(rows, vector<int>(cols, 0));
 }
 
-void GameOfLife::setCell(int row, int col, bool alive) {
-    if (row >= 0 && row < rows && col >= 0 && col < cols) {
-        grid[row][col] = alive;
+void GameOfLife::initializeRandom() {
+    srand(static_cast<unsigned>(time(0)));
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+            grid[i][j] = rand() % 2;
+}
+
+void GameOfLife::display() const {
+    system("clear"); // "cls" on Windows
+    for (const auto& row : grid) {
+        for (int cell : row)
+            cout << (cell ? 'O' : '.') << ' ';
+        cout << '\n';
     }
+    cout << '\n';
 }
 
-bool GameOfLife::getCell(int row, int col) const {
-    if (row >= 0 && row < rows && col >= 0 && col < cols)
-        return grid[row][col];
-    return false;
+void GameOfLife::update() {
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            int neighbors = countAliveNeighbors(i, j);
+            if (grid[i][j]) {
+                nextGrid[i][j] = (neighbors >= survivalLower && neighbors <= survivalUpper) ? 1 : 0;
+            } else {
+                nextGrid[i][j] = (neighbors == birthLimit) ? 1 : 0;
+            }
+        }
+    }
+    swap(grid, nextGrid);
 }
 
 int GameOfLife::countAliveNeighbors(int row, int col) const {
     int count = 0;
-    for (int dr = -1; dr <= 1; ++dr) {
-        for (int dc = -1; dc <= 1; ++dc) {
-            if (dr == 0 && dc == 0) continue;
-            int r = row + dr, c = col + dc;
-            if (r >= 0 && r < rows && c >= 0 && c < cols && grid[r][c])
-                ++count;
+    for (int i = -1; i <= 1; ++i)
+        for (int j = -1; j <= 1; ++j) {
+            if (i == 0 && j == 0) continue;
+            int r = row + i, c = col + j;
+            if (r >= 0 && r < rows && c >= 0 && c < cols)
+                count += grid[r][c];
         }
-    }
     return count;
-}
-
-void GameOfLife::nextGeneration() {
-    std::vector<std::vector<bool>> newGrid = grid;
-
-    for (int r = 0; r < rows; ++r) {
-        for (int c = 0; c < cols; ++c) {
-            int neighbors = countAliveNeighbors(r, c);
-            if (grid[r][c]) {
-                newGrid[r][c] = survivalRules.count(neighbors);
-            } else {
-                newGrid[r][c] = birthRules.count(neighbors);
-            }
-        }
-    }
-    grid = newGrid;
-}
-
-void GameOfLife::display() const {
-    for (const auto& row : grid) {
-        for (bool cell : row) {
-            std::cout << (cell ? 'O' : '.');
-        }
-        std::cout << '\n';
-    }
-    std::cout << "----------------\n";
 }
 
